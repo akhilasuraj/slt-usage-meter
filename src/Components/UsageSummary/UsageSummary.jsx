@@ -65,8 +65,8 @@ const UsageSummary = () => {
         <span>
           <p>{`${standard.name} (${standard.limit} ${standard.volume_unit})`}</p>
           <div className="flex justify-between">
-            <p>Used : {`${standard.used} ${standard.volume_unit}`}</p>
             <p>Remaining : {`${standard.remaining} ${standard.volume_unit}`}</p>
+            <p>Used : {`${standard.used} ${standard.volume_unit}`}</p>
           </div>
           <ProgressBar width={standard.percentage} />
         </span>
@@ -76,8 +76,8 @@ const UsageSummary = () => {
         <span>
           <p>{`Night (${nightLimit.toFixed(1)} ${total.volume_unit})`}</p>
           <div className="flex justify-between">
-            <p>Used : {`${nightUsed.toFixed(1)} ${total.volume_unit}`}</p>
             <p>Remaining : {`${nightRemaining.toFixed(1)} ${total.volume_unit}`}</p>
+            <p>Used : {`${nightUsed.toFixed(1)} ${total.volume_unit}`}</p>
           </div>
           <ProgressBar width={nightPercentage.toFixed(0)} />
         </span>
@@ -89,8 +89,8 @@ const UsageSummary = () => {
             <span>
               <p>{`${vasPackage.name} (${vasPackage.limit} ${vasPackage.volume_unit})`}</p>
               <div className="flex justify-between">
-                <p>Used : {`${vasPackage.used} ${vasPackage.volume_unit}`}</p>
                 <p>Remaining : {`${vasPackage.remaining} ${vasPackage.volume_unit}`}</p>
+                <p>Used : {`${vasPackage.used} ${vasPackage.volume_unit}`}</p>
               </div>
               <ProgressBar width={vasPackage.percentage} />
             </span>
