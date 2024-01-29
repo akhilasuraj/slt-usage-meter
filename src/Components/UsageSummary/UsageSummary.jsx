@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setIsLoggedIn } from "../../features/login/loginSlice";
 import { LocalStorageKeys } from "../../shared/constants/constants";
 import ProgressBar from "../Shared/ProgressBar";
+import { useNavigate } from "react-router-dom";
 
 const UsageSummary = () => {
   const [standard, setStandard] = useState(undefined);
@@ -12,27 +13,44 @@ const UsageSummary = () => {
   const [packageName, setPackageName] = useState("");
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    coreApiService.get("BBVAS", "UsageSummary", null, { subscriberID: localStorage.getItem(LocalStorageKeys.ServiceId) }).then((response) => {
-      if (response?.status === 200) {
-        setStandard(response.data?.dataBundle?.my_package_info?.usageDetails[0]);
-        setTotal(response.data?.dataBundle?.my_package_info?.usageDetails[1]);
-        setPackageName(response.data?.dataBundle?.my_package_info?.package_name);
-      } else {
+    coreApiService
+      .get("BBVAS", "UsageSummary", null, { subscriberID: localStorage.getItem(LocalStorageKeys.ServiceId) })
+      .then((response) => {
+        if (response?.status === 200) {
+          setStandard(response.data?.dataBundle?.my_package_info?.usageDetails[0]);
+          setTotal(response.data?.dataBundle?.my_package_info?.usageDetails[1]);
+          setPackageName(response.data?.dataBundle?.my_package_info?.package_name);
+          dispatch(setIsLoggedIn(true));
+        } else {
+          dispatch(setIsLoggedIn(false));
+          navigate("/homepage");
+          localStorage.clear();
+        }
+      })
+      .catch((error) => {
         dispatch(setIsLoggedIn(false));
-        localStorage.clear();
-      }
-    });
+        console.log(error);
+      });
 
-    coreApiService.get("BBVAS", "GetDashboardVASBundles", null, { subscriberID: localStorage.getItem(LocalStorageKeys.ServiceId) }).then((response) => {
-      if (response?.status === 200) {
-        setVasPackages(response.data.dataBundle.usageDetails);
-      } else {
+    coreApiService
+      .get("BBVAS", "GetDashboardVASBundles", null, { subscriberID: localStorage.getItem(LocalStorageKeys.ServiceId) })
+      .then((response) => {
+        if (response?.status === 200) {
+          setVasPackages(response.data.dataBundle.usageDetails);
+          dispatch(setIsLoggedIn(true));
+        } else {
+          dispatch(setIsLoggedIn(false));
+          navigate("/homepage");
+          localStorage.clear();
+        }
+      })
+      .catch((error) => {
         dispatch(setIsLoggedIn(false));
-        localStorage.clear();
-      }
-    });
+        console.log(error);
+      });
   }, []);
 
   let nightLimit = parseFloat(parseFloat(total?.limit) - parseFloat(standard?.limit));
@@ -47,7 +65,7 @@ const UsageSummary = () => {
         <span>
           <p>{`${standard.name} (${standard.limit} ${standard.volume_unit})`}</p>
           <div className="flex justify-between">
-            <p tooltip="Enter your username">{`${standard.used} ${standard.volume_unit}`}</p>
+            <p>Used : {`${standard.used} ${standard.volume_unit}`}</p>
             <p>Remaining : {`${standard.remaining} ${standard.volume_unit}`}</p>
           </div>
           <ProgressBar width={standard.percentage} />

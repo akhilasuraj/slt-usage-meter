@@ -4,11 +4,13 @@ import { coreApiService } from "../../shared/services/coreApiService";
 import logo from "../../assets/images/logo-large-white.png";
 import { setIsLoggedIn } from "../../features/login/loginSlice";
 import { LocalStorageKeys } from "../../shared/constants/constants";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [input, setInput] = useState({});
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const inputHandler = (e) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -26,6 +28,7 @@ const Login = () => {
         if (response?.status === 200) {
           localStorage.setItem(LocalStorageKeys.AccessToken, response.data.accessToken);
           localStorage.setItem(LocalStorageKeys.RefreshToken, response.data.refreshToken);
+          dispatch(setIsLoggedIn(true));
         } else {
           dispatch(setIsLoggedIn(false));
         }
@@ -43,6 +46,8 @@ const Login = () => {
         if (response?.status === 200) {
           localStorage.setItem(LocalStorageKeys.ServiceId, response.data?.dataBundle?.listofBBService[0]?.serviceID);
           dispatch(setIsLoggedIn(true));
+          navigate("/details");
+          console.log("redirecting");
         } else {
           dispatch(setIsLoggedIn(false));
         }
